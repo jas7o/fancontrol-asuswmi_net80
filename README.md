@@ -2,8 +2,8 @@
 
 # FanControl.AsusWMI [![Build status](https://ci.appveyor.com/api/projects/status/mc33hki902w421le?svg=true)](https://ci.appveyor.com/project/Mourdraug/fancontrol-asuswmi)
 
-Plugin for [FanControl](https://github.com/Rem0o/FanControl.Releases) providing access to Asus motherboard sensors using Asus WMI methods.
-...and plugin fork (https://github.com/jas7o/fancontrol-asuswmi_net80/releases) for people like me, who have issuu with plugin using Fancontrol .NET 8.0 Im keep getting error like "Plugin stop work, please refresh etc..." so I make version of this for >Net 8.0
+Plugin for [FanControl .NET 4.8](https://github.com/Rem0o/FanControl.Releases) providing access to Asus motherboard sensors using Asus WMI methods.
+...and plugin fork [FanControl .NET 8.0](https://github.com/jas7o/fancontrol-asuswmi_net80/releases) for people like me, who have issuu with plugin using Fancontrol .NET 8.0 Im keep getting error like "Plugin stop work, please refresh etc..." so I make version of this for >Net 8.0
 
 ## Installation
 
