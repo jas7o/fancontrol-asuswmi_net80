@@ -1,6 +1,7 @@
 ﻿using FanControl.Plugins;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Management;
 
 namespace FanControl.AsusWMI
@@ -12,6 +13,11 @@ namespace FanControl.AsusWMI
 
         private readonly IPluginLogger logger;
         private readonly IPluginDialog dialog;
+
+        public AsusWMIPlugin(IPluginDialog dialog)
+        {
+            this.dialog = dialog;
+        }
 
         public AsusWMIPlugin(IPluginLogger logger, IPluginDialog dialog)
         {
@@ -50,7 +56,7 @@ namespace FanControl.AsusWMI
             {
                 ManagementBaseObject wmiSensorNumResult = asusHW.InvokeMethod("sensor_get_number", null, null);
                 uint sensorCount = (uint)wmiSensorNumResult["Data"];
-                sources = new Dictionary<uint, List<AsusWMISensor>>();
+                sources = [];
                 for (uint i = 0; i < sensorCount; i++)
                 {
                     var parameters = asusHW.GetMethodParameters("sensor_get_info");
@@ -63,13 +69,15 @@ namespace FanControl.AsusWMI
                         WmiIndex = i,
                         WmiDataType = (uint)wmiSensorInfoResult["Data_Type"],
                         Id = $"AsusWMI{i}",
-                        Name = wmiSensorInfoResult["Name"].ToString(),
+                        Name = wmiSensorInfoResult[nameof(Name)].ToString(),
                     };
-                    if (!sources.ContainsKey(source))
+                    if (!sources.TryGetValue(source, out List<AsusWMISensor> value))
                     {
-                        sources.Add(source, new List<AsusWMISensor>());
+                        value = [];
+                        sources.Add(source, value);
                     }
-                    sources[source].Add(sensor);
+
+                    value.Add(sensor);
                     switch (sensorType)
                     {
                         case 1:
@@ -116,14 +124,20 @@ namespace FanControl.AsusWMI
             }
         }
 
-        ManagementObject GetInstance(ManagementScope scope, string path)
+        static ManagementObject GetInstance(ManagementScope scope, string path)
         {
-            ManagementClass cls = new ManagementClass(scope.Path.Path, path, null);
-            foreach (ManagementObject inst in cls.GetInstances())
+            ManagementClass cls = new(scope.Path.Path, path, null);
+            foreach (ManagementObject inst in cls.GetInstances().Cast<ManagementObject>())
             {
                 return inst;
             }
             return null;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is AsusWMIPlugin plugin &&
+                   EqualityComparer<IPluginDialog>.Default.Equals(dialog, plugin.dialog);
         }
     }
 }
