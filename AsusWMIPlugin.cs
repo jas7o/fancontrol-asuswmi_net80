@@ -139,5 +139,10 @@ namespace FanControl.AsusWMI
             return obj is AsusWMIPlugin plugin &&
                    EqualityComparer<IPluginDialog>.Default.Equals(dialog, plugin.dialog);
         }
+
+        public override string ToString()
+        {
+            return base.ToString();
+        }
     }
 }
